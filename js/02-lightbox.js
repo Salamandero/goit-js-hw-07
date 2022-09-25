@@ -12,3 +12,16 @@ function createGal(array) {
  
 const galleryContainer = document.querySelector(".gallery");
 galleryContainer.insertAdjacentHTML('beforeend', createGal(galleryItems));
+
+
+
+
+
+const lightbox = new SimpleLightbox('.gallery a');
+lightbox.on('show.simplelightbox', function () {
+	// do something…
+});
+
+lightbox.on('error.simplelightbox', function (e) {
+	console.log(e); // some usefull information
+});
