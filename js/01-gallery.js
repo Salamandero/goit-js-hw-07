@@ -32,21 +32,51 @@ const galleryContainer = document.querySelector(".gallery");
 galleryContainer.insertAdjacentHTML('beforeend', createGal(galleryItems));
 
 
+if ('loading' in HTMLImageElement.prototype) {
+    console.log('Браузер поддерживает lazyload');
+    const lazyImage = document.querySelectorAll('.gallery__image');
+    
+    lazyImage.forEach(img => {
+    img.loading = 'lazy';
+    })   
+}
+else {
+  const script = document.createElement('script');
+  script.src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js";
+  script.integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==";
+  script.crossOrigin="anonymous";
+  script.referrerPolicy="no-referrer"
 
+    document.body.appendChild(script);
 
-// import * as basicLightbox from 'basiclightbox'
+    const lazyImage = document.querySelectorAll('.gallery__image');
+    lazyImage.forEach(img => {
+       img.classList.add('lazyload');
+       img.dataset.src = img.src;
+       }) 
+}
 
-// const instance = basicLightbox.create(`
-//     <img src="${galleryItems.original}" width="800" height="600">
-// `)
+galleryContainer.addEventListener('click', handleGalleryClick);
 
-// instance.show()
+function handleGalleryClick(event) {
+    event.preventDefault();
+  
+    if (!event.target.classList.contains('gallery__image')) {
+    return
+    }
+    else {
+    const descriptionValue = event.target.dataset.source;
 
+    const modal = basicLightbox.create(
+    `<img src="${descriptionValue}">`,
+    {onShow: () => {window.addEventListener('keydown', handleEscPress)},
+    onClose: () => {window.removeEventListener('keydown', handleEscPress)}
+})
+    modal.show();
 
-// import * as basicLightbox from 'basiclightbox'
-
-// const instance = basicLightbox.create(`
-//     <img src="assets/images/image.png" width="800" height="600">
-// `)
-
-// instance.show()
+    function handleEscPress (event) {
+    if (event.code === "Escape") {
+        modal.close()}
+}
+}
+}
